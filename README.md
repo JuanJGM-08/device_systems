@@ -164,6 +164,11 @@ GET http://127.0.0.1:8000/users?is_active=true
 ![POST/users](images/03.png)
 ---
 
+## Captura 3 - POST /Validacion Correo Repetido
+
+![POST/ Validacion](images/03-2.png)
+---
+
 ## Captura 4 — GET /users/{user_id}
 
 ![GET/users/{user_id}](images/04.png)
