@@ -1,5 +1,5 @@
 from pydantic import BaseModel, EmailStr, Field
-from typing import Literal
+from typing import Optional, Literal
 
 
 class UserBase(BaseModel):
@@ -16,5 +16,9 @@ class UserCreate(UserBase):
 class UserResponse(UserBase):
     id: int
 
-    class Config:
-        from_attributes = True
+
+class UserUpdate(BaseModel):
+    name: Optional[str] = Field(None, min_length=3)
+    email: Optional[EmailStr] = None
+    role: Optional[Literal["admin", "support", "user"]] = None
+    is_active: Optional[bool] = None
