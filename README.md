@@ -149,6 +149,11 @@ GET http://127.0.0.1:8000/users?is_active=true
 
 # Capturas de Swagger UI
 
+
+<details>
+<summary><b> Capturas GET/POST (Click para abrir)</b></summary>
+
+
 ## Captura 1 — Swagger UI funcionando
 
 ![SwaggerUI](images/01.png)
@@ -172,7 +177,39 @@ GET http://127.0.0.1:8000/users?is_active=true
 ## Captura 4 — GET /users/{user_id}
 
 ![GET/users/{user_id}](images/04.png)
+
+</details>
+
+<details>
+<summary><b> Capturas PUT/PACH/DELETE (Click para abrir)</b></summary>
+
+## Captura 1 — PUT/users/{user_id}
+
+![PUT/users/{user_id}](images/PUT_1.png)
+
+
+![PUT/users/{user_id}](images/PUT_2.png)
+
+## Captura 1 - PUT Validacion Error
+
+
+![PUT/users/{user_id}](images/PUT_ERROR.png)
 ---
+
+## Captura 2 - PATCH/users/{users_id}
+
+![PATCH/users/{user_id}](images/PATCH_1.png)
+---
+
+![PATCH/users/{user_id}](images/PATCH_2.png)
+---
+
+## Captura 1 - PATCH Validacion Error
+
+![PATCH/users/{user_id}](images/PATCH_ERROR.png)
+---
+
+
 
 # Reflexión sobre FastAPI
 
