@@ -179,4 +179,6 @@ GET http://127.0.0.1:8000/users?is_active=true
 FastAPI facilita el desarrollo de APIs REST gracias a su rapidez, validaciones automáticas y documentación integrada con Swagger UI. Durante el desarrollo se aprendió a trabajar con rutas, parámetros, validaciones con Pydantic y respuestas HTTP estructuradas de manera organizada.
 
 # Presentacion de Video
-[Ver video](https://www.loom.com/share/19a31984ae5540718d48f6c05c179278)
+[Ver video EV07](https://www.loom.com/share/19a31984ae5540718d48f6c05c179278)
+
+[Ver Video EV08](https://www.loom.com/share/684ce3de85c74e13abfcdaf837d38786)
