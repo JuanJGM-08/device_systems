@@ -16,7 +16,7 @@ device_systems es una API REST desarrollada con FastAPI para la gestión de usua
 
 ---
 
-# Estructura del proyecto
+# Estructura del proyecto EV08
 
 ```bash
 device_systems/

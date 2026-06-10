@@ -1,5 +1,9 @@
-from pydantic import BaseModel, EmailStr, Field
 from typing import Optional, Literal
+
+from pydantic import BaseModel
+from pydantic import ConfigDict
+from pydantic import EmailStr
+from pydantic import Field
 
 
 class UserBase(BaseModel):
@@ -16,9 +20,25 @@ class UserCreate(UserBase):
 class UserResponse(UserBase):
     id: int
 
+    model_config = ConfigDict(
+        from_attributes=True
+    )
+
 
 class UserUpdate(BaseModel):
-    name: Optional[str] = Field(None, min_length=3)
+    name: Optional[str] = Field(
+        None,
+        min_length=3
+    )
+
     email: Optional[EmailStr] = None
-    role: Optional[Literal["admin", "support", "user"]] = None
+
+    role: Optional[
+        Literal[
+            "admin",
+            "support",
+            "user"
+        ]
+    ] = None
+
     is_active: Optional[bool] = None

@@ -1,5 +1,14 @@
-from fastapi import APIRouter, HTTPException, Depends, Response, status
 from typing import Optional
+
+from fastapi import APIRouter
+from fastapi import Depends
+from fastapi import HTTPException
+from fastapi import Response
+from fastapi import status
+
+from sqlalchemy.orm import Session
+
+from app.dependencies.database_dependency import get_db
 
 from app.schemas.user_schema import (
     UserCreate,
@@ -33,20 +42,14 @@ router = APIRouter(
 )
 def list_users(
     role: Optional[str] = None,
-    is_active: Optional[bool] = None
+    is_active: Optional[bool] = None,
+    db: Session = Depends(get_db)
 ):
-    users = get_all_users()
-
-    if role:
-        users = [user for user in users if user["role"] == role]
-
-    if is_active is not None:
-        users = [
-            user for user in users
-            if user["is_active"] == is_active
-        ]
-
-    return users
+    return get_all_users(
+        db,
+        role,
+        is_active
+    )
 
 
 @router.get(
@@ -54,7 +57,9 @@ def list_users(
     response_model=UserResponse,
     summary="Obtener usuario por ID"
 )
-def get_user(user=Depends(get_user_or_404)):
+def get_user(
+    user=Depends(get_user_or_404)
+):
     return user
 
 
@@ -64,11 +69,19 @@ def get_user(user=Depends(get_user_or_404)):
     status_code=status.HTTP_201_CREATED,
     summary="Crear usuario"
 )
-def create_new_user(user: UserCreate):
+def create_new_user(
+    user: UserCreate,
+    db: Session = Depends(get_db)
+):
+    validate_email_unique(
+        user.email,
+        db
+    )
 
-    validate_email_unique(user.email)
-
-    return create_user(user.model_dump())
+    return create_user(
+        db,
+        user.model_dump()
+    )
 
 
 @router.put(
@@ -78,20 +91,20 @@ def create_new_user(user: UserCreate):
 )
 def replace_user(
     user_data: UserCreate,
+    db: Session = Depends(get_db),
     user=Depends(get_user_or_404)
 ):
-
     validate_email_unique(
         user_data.email,
-        user["id"]
+        db,
+        user.id
     )
 
-    updated_user = update_user(
-        user["id"],
+    return update_user(
+        db,
+        user.id,
         user_data.model_dump()
     )
-
-    return updated_user
 
 
 @router.patch(
@@ -101,10 +114,12 @@ def replace_user(
 )
 def partial_update_user(
     user_data: UserUpdate,
+    db: Session = Depends(get_db),
     user=Depends(get_user_or_404)
 ):
-
-    update_data = user_data.model_dump(exclude_unset=True)
+    update_data = user_data.model_dump(
+        exclude_unset=True
+    )
 
     if not update_data:
         raise HTTPException(
@@ -115,15 +130,15 @@ def partial_update_user(
     if "email" in update_data:
         validate_email_unique(
             update_data["email"],
-            user["id"]
+            db,
+            user.id
         )
 
-    updated_user = update_user(
-        user["id"],
+    return update_user(
+        db,
+        user.id,
         update_data
     )
-
-    return updated_user
 
 
 @router.delete(
@@ -131,9 +146,14 @@ def partial_update_user(
     status_code=status.HTTP_204_NO_CONTENT,
     summary="Eliminar usuario"
 )
-def remove_user(user=Depends(get_user_or_404)):
-
-    delete_user(user["id"])
+def remove_user(
+    db: Session = Depends(get_db),
+    user=Depends(get_user_or_404)
+):
+    delete_user(
+        db,
+        user.id
+    )
 
     return Response(
         status_code=status.HTTP_204_NO_CONTENT

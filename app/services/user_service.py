@@ -1,45 +1,90 @@
-from app.data.users_db import users_db
+from sqlalchemy.orm import Session
+
+from app.models.user_model import User
 
 
-def get_all_users():
-    return users_db
+def get_all_users(
+    db: Session,
+    role=None,
+    is_active=None
+):
+    query = db.query(User)
+
+    if role:
+        query = query.filter(
+            User.role == role
+        )
+
+    if is_active is not None:
+        query = query.filter(
+            User.is_active == is_active
+        )
+
+    return query.all()
 
 
-def get_user_by_id(user_id: int):
-    for user in users_db:
-        if user["id"] == user_id:
-            return user
-    return None
+def get_user_by_id(
+    db: Session,
+    user_id: int
+):
+    return db.query(User).filter(
+        User.id == user_id
+    ).first()
 
 
-def create_user(user_data):
-    new_id = max(user["id"] for user in users_db) + 1 if users_db else 1
-
-    new_user = {
-        "id": new_id,
-        **user_data
-    }
-
-    users_db.append(new_user)
-
-    return new_user
+def get_user_by_email(
+    db: Session,
+    email: str
+):
+    return db.query(User).filter(
+        User.email == email
+    ).first()
 
 
-def update_user(user_id: int, user_data):
-    user = get_user_by_id(user_id)
+def create_user(
+    db: Session,
+    user_data
+):
+    user = User(**user_data)
 
-    if user:
-        user.update(user_data)
-        return user
+    db.add(user)
+    db.commit()
+    db.refresh(user)
 
-    return None
+    return user
 
 
-def delete_user(user_id: int):
-    user = get_user_by_id(user_id)
+def update_user(
+    db: Session,
+    user_id: int,
+    user_data
+):
+    user = get_user_by_id(
+        db,
+        user_id
+    )
 
-    if user:
-        users_db.remove(user)
-        return True
+    for key, value in user_data.items():
+        setattr(
+            user,
+            key,
+            value
+        )
 
-    return False
+    db.commit()
+    db.refresh(user)
+
+    return user
+
+
+def delete_user(
+    db: Session,
+    user_id: int
+):
+    user = get_user_by_id(
+        db,
+        user_id
+    )
+
+    db.delete(user)
+    db.commit()

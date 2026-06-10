@@ -1,10 +1,23 @@
+from fastapi import Depends
 from fastapi import HTTPException
-from app.data.users_db import users_db
-from app.services.user_service import get_user_by_id
+from sqlalchemy.orm import Session
+
+from app.dependencies.database_dependency import get_db
+
+from app.services.user_service import (
+    get_user_by_id,
+    get_user_by_email
+)
 
 
-def get_user_or_404(user_id: int):
-    user = get_user_by_id(user_id)
+def get_user_or_404(
+    user_id: int,
+    db: Session = Depends(get_db)
+):
+    user = get_user_by_id(
+        db,
+        user_id
+    )
 
     if not user:
         raise HTTPException(
@@ -15,10 +28,18 @@ def get_user_or_404(user_id: int):
     return user
 
 
-def validate_email_unique(email: str, user_id: int = None):
-    for user in users_db:
-        if user["email"] == email and user["id"] != user_id:
-            raise HTTPException(
-                status_code=400,
-                detail="Correo electrónico duplicado"
-            )
+def validate_email_unique(
+    email: str,
+    db: Session,
+    user_id: int = None
+):
+    user = get_user_by_email(
+        db,
+        email
+    )
+
+    if user and user.id != user_id:
+        raise HTTPException(
+            status_code=400,
+            detail="Correo electrónico duplicado"
+        )
