@@ -180,6 +180,8 @@ GET http://127.0.0.1:8000/users?is_active=true
 
 </details>
 
+# Capturas Put/Patch/Delete
+
 <details>
 <summary><b> Capturas PUT/PACH/DELETE (Click para abrir)</b></summary>
 
@@ -321,6 +323,158 @@ Finalmente, la documentación automática generada por Swagger UI y ReDoc facili
 
 ---
 
+# Video EV08
 
 [Ver Video EV08](https://www.loom.com/share/684ce3de85c74e13abfcdaf837d38786)
 
+# Explicacion de la estructura del proyecto EV09
+
+el objetivo fue que el recurso "users" que se gestionaba en la memoria mediante listas o estructuras temporales, en esta nueva version transformaremos la API para que los usuarios se almacenen, consulten, actualicen y eliminen desde una base de datos usando modelos SQLAlchemy, schemas Pydantic, validaciones, constraints y operaciones CRUD
+
+
+```bash
+
+├── app/
+│   main.py
+│   
+├───database
+│   │   connection.py
+│   │   users_db.py
+│   │   __init__.py
+│   │   
+│   └───__pycache__
+│           connection.cpython-314.pyc
+│           users_db.cpython-314.pyc
+│           __init__.cpython-314.pyc
+│           
+├───dependencies
+│   │   database_dependency.py
+│   │   user_dependencies.py
+│   │   __init__.py
+│   │   
+│   └───__pycache__
+│           database_dependency.cpython-314.pyc
+│           user_dependencies.cpython-314.pyc
+│           __init__.cpython-314.pyc
+│           
+├───models
+│   │   user_model.py
+│   │   __init__.py
+│   │   
+│   └───__pycache__
+│           user_model.cpython-314.pyc
+│           __init__.cpython-314.pyc
+│           
+├───routes
+│   │   user_routes.py
+│   │   __init__.py
+│   │   
+│   └───__pycache__
+│           user_routes.cpython-314.pyc
+│           __init__.cpython-314.pyc
+│           
+├───schemas
+│   │   user_schema.py
+│   │   __init__.py
+│   │   
+│   └───__pycache__
+│           user_schema.cpython-314.pyc
+│           __init__.cpython-314.pyc
+│           
+├───services
+│   │   user_service.py
+│   │   __init__.py
+│   │   
+│   └───__pycache__
+│           user_service.cpython-314.pyc
+│           __init__.cpython-314.pyc
+│           
+└───__pycache__
+        main.cpython-314.pyc
+
+```
+
+# Evidencias
+
+<details>
+<summary><b> Base Datos + Swagger(Click para abrir)</b></summary>
+
+
+## Captura 1 — Estructura de archivos
+
+![Estructura de archivos](images/estructura.png)
+---
+
+## Captura 2 — Base de Datos
+
+![Base de Datos](images/BaseDatos.png)
+---
+
+## Captura 3 — Get/users/
+
+![Get/users/](images/Get.png)
+---
+
+## Captura 4 — Post/users/ 
+
+![Post/users/](images/Post.png)
+---
+
+## Captura 5 — Get/users/{users_id}
+
+![Get/users/{users_id}](images/Get_id.png)
+---
+
+## Captura  6 — Patch/users/{users_id}
+
+![Patch/users/{users_id}](images/Patch.png)
+---
+
+## Captura  7 — Delete/users/{users_id}
+
+![Post/users/{users_id}](images/Post_id.png)
+---
+
+## Captura  8 — Error correo duplicado (400)
+
+![Error correo duplicado](images/ErrorCodigo.png)
+---
+
+## Captura  9 — Datos invalidos (422)
+
+![Datos invalidos](images/Error_2.png)
+---
+
+</details>
+
+##  Diferencia entre SQLAlchemy Model y Pydantic Schema
+
+| Aspecto | SQLAlchemy (Model) | Pydantic (Schema) |
+|---------|--------------------|--------------------|
+| **Qué hace** | Define la estructura de la tabla en BD | Valida los datos que entran/salen por la API |
+| **Dónde vive** | En la base de datos (disco duro) | En la memoria RAM (solo durante la petición) |
+| **Ejemplo real** | email = Column(String, unique=True) | email: EmailStr |
+| **Validación** | Solo tipos básicos (String, Integer) | Reglas complejas (email, longitud, valores permitidos) |
+| **Persistencia** |  Los datos se guardan permanentemente |  Los datos se pierden si no se guardan |
+
+### En tu código:
+
+- **`user_model.py`** → SQLAlchemy: le dice a la BD cómo crear la tabla `users`
+- **`user_schema.py`** → Pydantic: valida que el email sea válido y el nombre tenga al menos 3 caracteres
+
+
+---
+
+##  Reflexión: Importancia de la persistencia
+
+### ¿Qué pasaría sin persistencia?
+
+| Situación | Sin persistencia | Con persistencia (tu API) |
+|-----------|------------------|---------------------------|
+| Reinicias el servidor |  Se pierden todos los usuarios |  Los usuarios siguen ahí |
+| Dos clientes consultan |  Cada uno ve datos diferentes |  Todos ven los mismos datos |
+| Quieres saber cuándo se creó un usuario |  No es posible |  El campo `created_at` lo guarda |
+
+# Video EV09
+
+[Ver Video EV09]()
