@@ -1,4 +1,4 @@
-# device_systems API REST
+# device_systems API REST 
 
 ## Descripción de la aplicación
 
@@ -478,3 +478,230 @@ el objetivo fue que el recurso "users" que se gestionaba en la memoria mediante 
 # Video EV09
 
 [Ver Video EV09]()
+
+# Explicación de la estructura del proyecto EV10
+
+##  Descripción del Proyecto
+
+API REST para gestión de usuarios, dispositivos y préstamos, desarrollada con FastAPI. Esta versión implementa migraciones con Alembic, asociaciones entre modelos (User, Device, Loan) y consultas con joins para obtener información relacionada.
+
+##  Tecnologías Utilizadas
+
+- FastAPI
+- SQLAlchemy
+- Alembic
+- Pydantic
+- SQLite
+- Uvicorn
+
+##  Estructura del Proyecto
+
+```bash
+
+device_systems/
+│
+├── app/
+│   │   main.py
+│   │
+│   ├───database/
+│   │   │   connection.py
+│   │   │   users_db.py
+│   │   │   __init__.py
+│   │   │
+│   │   └───__pycache__/
+│   │           connection.cpython-314.pyc
+│   │           users_db.cpython-314.pyc
+│   │           __init__.cpython-314.pyc
+│   │
+│   ├───dependencies/
+│   │   │   database_dependency.py
+│   │   │   user_dependencies.py
+│   │   │   __init__.py
+│   │   │
+│   │   └───__pycache__/
+│   │           database_dependency.cpython-314.pyc
+│   │           user_dependencies.cpython-314.pyc
+│   │           __init__.cpython-314.pyc
+│   │
+│   ├───models/
+│   │   │   user_model.py
+│   │   │   device_model.py
+│   │   │   loan_model.py
+│   │   │   __init__.py
+│   │   │
+│   │   └───__pycache__/
+│   │           user_model.cpython-314.pyc
+│   │           device_model.cpython-314.pyc
+│   │           loan_model.cpython-314.pyc
+│   │           __init__.cpython-314.pyc
+│   │
+│   ├───routes/
+│   │   │   user_routes.py
+│   │   │   device_routes.py
+│   │   │   loan_routes.py
+│   │   │   __init__.py
+│   │   │
+│   │   └───__pycache__/
+│   │           user_routes.cpython-314.pyc
+│   │           device_routes.cpython-314.pyc
+│   │           loan_routes.cpython-314.pyc
+│   │           __init__.cpython-314.pyc
+│   │
+│   ├───schemas/
+│   │   │   user_schema.py
+│   │   │   device_schema.py
+│   │   │   loan_schema.py
+│   │   │   __init__.py
+│   │   │
+│   │   └───__pycache__/
+│   │           user_schema.cpython-314.pyc
+│   │           device_schema.cpython-314.pyc
+│   │           loan_schema.cpython-314.pyc
+│   │           __init__.cpython-314.pyc
+│   │
+│   ├───services/
+│   │   │   user_service.py
+│   │   │   device_service.py
+│   │   │   loan_service.py
+│   │   │   __init__.py
+│   │   │
+│   │   └───__pycache__/
+│   │           user_service.cpython-314.pyc
+│   │           device_service.cpython-314.pyc
+│   │           loan_service.cpython-314.pyc
+│   │           __init__.cpython-314.pyc
+│   │
+│   └───__pycache__/
+│           main.cpython-314.pyc
+│
+├───alembic/
+│   │
+│   └───versions/
+│           └─── 4df4a28f13b7_initial_migration_with_users_devices_.py
+│   │
+│   │   __init__.py
+│   │   env.py
+│   │   script.py.mako
+│   │
+│   └───__pycache__/
+│
+├───images/
+│
+├───venv/
+│
+├── .env
+├── .env.example
+├── .gitignore
+├── alembic.ini
+├── device_systems.db
+├── requirements.txt
+└── README.md
+```
+
+##  Instalación
+
+# Crear entorno virtual
+python -m venv venv
+
+# Instalar dependencias
+pip install -r requirements.txt
+
+# Aplicar migraciones
+alembic upgrade head
+
+# Ejecutar servidor
+uvicorn app.main:app --reload
+
+##  Endpoints
+
+### Users
+
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| GET | /users | Listar usuarios |
+| GET | /users/{id} | Obtener usuario por ID |
+| POST | /users | Crear usuario |
+| PUT | /users/{id} | Actualizar usuario completo |
+| PATCH | /users/{id} | Actualizar usuario parcialmente |
+| DELETE | /users/{id} | Eliminar usuario |
+
+### Devices
+
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| GET | /devices | Listar dispositivos |
+| GET | /devices/{id} | Obtener dispositivo por ID |
+| POST | /devices | Crear dispositivo |
+| PUT | /devices/{id} | Actualizar dispositivo completo |
+| PATCH | /devices/{id} | Actualizar dispositivo parcialmente |
+| DELETE | /devices/{id} | Eliminar dispositivo |
+
+### Loans
+
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| GET | /loans | Listar préstamos |
+| GET | /loans/details | Listar préstamos con JOIN |
+| GET | /loans/{id} | Obtener préstamo por ID |
+| GET | /loans/user/{id} | Préstamos de un usuario |
+| GET | /loans/device/{id} | Préstamos de un dispositivo |
+| POST | /loans | Crear préstamo |
+| PATCH | /loans/{id}/return | Devolver dispositivo |
+| PATCH | /loans/{id} | Actualizar préstamo |
+| DELETE | /loans/{id} | Eliminar préstamo |
+
+##  Consultas con JOIN - /loans/details
+
+Ejemplo de respuesta:
+
+{
+  "id": 1,
+  "status": "active",
+  "loan_date": "2024-06-18T10:00:00",
+  "user": {
+    "id": 1,
+    "name": "Juan Perez",
+    "email": "juan@test.com"
+  },
+
+  "device": {
+    "id": 1,
+    "name": "Laptop HP",
+    "serial_number": "HP-001",
+    "device_type": "laptop"
+  }
+}
+
+##  Migraciones con Alembic
+
+# Generar migración
+alembic revision --autogenerate -m "mensaje"
+
+# Aplicar migración
+alembic upgrade head
+
+# Ver historial
+alembic history
+
+# Ver estado actual
+alembic current
+
+##  Evidencias
+
+- Swagger UI con endpoints Users, Devices, Loans
+- Creación de usuario, dispositivo y préstamo
+- GET /loans/details con información JOIN
+- Historial de migraciones
+- Base de datos con tablas creadas
+
+### ¿Qué se logró con esta actividad?
+
+1. Migraciones con Alembic: Control de versiones de la base de datos, permitiendo cambios estructurados y reversibles.
+
+2. Asociaciones entre modelos: Relaciones One-to-Many entre User-Loan y Device-Loan, garantizando integridad referencial.
+
+3. Consultas con JOIN: Obtención de información relacionada en una sola consulta, mejorando el rendimiento.
+
+4. Arquitectura por capas: Separación clara entre modelos, schemas, servicios y rutas.
+
+5. API REST completa: CRUD completo para Users, Devices y Loans.
