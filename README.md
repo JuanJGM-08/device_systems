@@ -477,7 +477,7 @@ el objetivo fue que el recurso "users" que se gestionaba en la memoria mediante 
 
 # Video EV09
 
-[Ver Video EV09]()
+[Ver Video EV09](https://www.loom.com/share/a81b89ea654a412fbd9b94c84b087215)
 
 # Explicación de la estructura del proyecto EV10
 
@@ -688,11 +688,100 @@ alembic current
 
 ##  Evidencias
 
-- Swagger UI con endpoints Users, Devices, Loans
-- Creación de usuario, dispositivo y préstamo
-- GET /loans/details con información JOIN
-- Historial de migraciones
-- Base de datos con tablas creadas
+<details>
+<summary><b> Evolucion FASTAPI (Click para abrir)</b></summary>
+
+
+## Captura 1 — Estructura de archivos
+
+![Ejecucion de alembic](images/Alembicinit.png)
+---
+
+## Captura 2 — creación de migración
+
+![creación de migración](images/CrearMigracion.png)
+---
+
+## Captura 3 — Aplicar Migracion
+
+![Aplicar migración](images/AplicarMigracion.png)
+---
+
+## Captura 4 — Tablas
+
+![Tablas](images/Tablas.png)
+---
+
+## Captura 5 — Swagger 
+
+![Swagger](images/Swagger.png)
+---
+
+## Captura 6 — creación de usuario, dispositivo y préstamo 
+
+### User
+
+![creación de usuario, dispositivo y préstamo ](images/POSTUser.png)
+
+### Device
+
+![Device](images/Device.png)
+
+### Loans
+
+![Loans](images/Loans.png)
+---
+
+## Captura 7 - consultas con joins
+
+![Consulta con Joins](images/Joins.png)
+---
+
+## Captura 8 - Filtros
+![Filtro Loans](images/LoanFiltro.png)
+---
+
+### Device Filtro
+
+![Device Filtro](images/GetDevice.png)
+---
+
+### Captura 9 - Devolucion
+
+![Devolucion](images/Devolucion.png)
+---
+
+
+</details>
+
+
+# Reflexión Final
+
+### ¿Qué importancia tienen las migraciones con Alembic?
+
+Las migraciones con Alembic son fundamentales porque:
+
+1. **Control de versiones de la base de datos:** Permiten mantener un historial de todos los cambios estructurales, facilitando el trabajo en equipo y la trazabilidad.
+2. **Reproducibilidad:** Cualquier desarrollador puede aplicar exactamente los mismos cambios en su entorno local.
+3. **Rollback controlado:** Si algo sale mal, se puede revertir a una versión anterior sin perder datos críticos.
+4. **Automatización:** Con `--autogenerate`, Alembic detecta automáticamente los cambios en los modelos y genera el código de migración.
+
+### ¿Por qué son importantes las relaciones entre modelos?
+
+1. **Integridad referencial:** Las relaciones con ForeignKey garantizan que los datos estén siempre conectados correctamente (ej: un préstamo siempre pertenece a un usuario y dispositivo existentes).
+2. **Eficiencia:** Permiten consultar datos relacionados sin múltiples viajes a la base de datos.
+3. **Mantenibilidad:** El código es más limpio y fácil de entender cuando las relaciones están definidas a nivel de modelo.
+
+### ¿Qué ventajas ofrecen las consultas con JOIN?
+
+1. **Reducción de consultas:** En lugar de hacer 3 consultas separadas (usuario, dispositivo, préstamo), se hace una sola con JOIN.
+2. **Rendimiento:** Menos viajes a la base de datos = respuesta más rápida.
+3. **Datos completos:** Se obtiene toda la información relacionada en un solo objeto JSON.
+4. **Filtros avanzados:** Permite filtrar por campos de tablas relacionadas (ej: filtrar préstamos por email del usuario o por tipo de dispositivo).
+
+### Conclusión
+
+La combinación de migraciones, relaciones y JOINs convierte una API básica en una solución profesional, mantenible y escalable. Alembic facilita el control de cambios, las relaciones garantizan la integridad de los datos, y los JOINs optimizan el rendimiento de las consultas.
 
 ### ¿Qué se logró con esta actividad?
 
