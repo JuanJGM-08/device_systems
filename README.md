@@ -754,6 +754,8 @@ alembic current
 
 </details>
 
+## Ver Video EV10
+[Ver Video EV10](https://www.loom.com/share/a2e6356dee184f7cb353f939fbffd3b8)
 
 # Reflexión Final
 
@@ -794,3 +796,279 @@ La combinación de migraciones, relaciones y JOINs convierte una API básica en 
 4. Arquitectura por capas: Separación clara entre modelos, schemas, servicios y rutas.
 
 5. API REST completa: CRUD completo para Users, Devices y Loans.
+
+
+# device_systems API REST — EV11
+
+API REST segura para gestión de usuarios, dispositivos y préstamos, desarrollada con FastAPI.
+
+---
+
+## Tecnologías utilizadas
+
+- Python 3.11+
+- FastAPI 0.136
+- SQLAlchemy 2.0 + Alembic
+- Pydantic v2
+- passlib[bcrypt] — hash de contraseñas
+- python-jose[cryptography] — tokens JWT
+- slowapi — rate limiting
+- python-dotenv — variables de entorno
+- Uvicorn
+
+---
+
+## Estructura del proyecto
+
+```bash
+device_systems/
+│── app/
+│   │── main.py
+│   │
+│   ├── auth/
+│   │   ├── auth_routes.py
+│   │   ├── auth_service.py
+│   │   └── security.py
+│   │
+│   ├── database/
+│   │   └── connection.py
+│   │
+│   ├── models/
+│   │   ├── user_model.py
+│   │   ├── device_model.py
+│   │   └── loan_model.py
+│   │
+│   ├── schemas/
+│   │   ├── user_schema.py
+│   │   ├── device_schema.py
+│   │   ├── loan_schema.py
+│   │   └── auth_schema.py
+│   │
+│   ├── routes/
+│   │   ├── user_routes.py
+│   │   ├── device_routes.py
+│   │   └── loan_routes.py
+│   │
+│   ├── services/
+│   │   ├── user_service.py
+│   │   ├── device_service.py
+│   │   └── loan_service.py
+│   │
+│   ├── dependencies/
+│   │   ├── database_dependency.py
+│   │   └── auth_dependency.py
+│   │
+│   └── middlewares/
+│       └── request_middleware.py
+│
+├── alembic/
+│   └── versions/
+│
+├── .env
+├── .env.example
+├── alembic.ini
+├── requirements.txt
+└── README.md
+```
+
+---
+
+## Endpoints
+
+### Autenticación (`/auth`)
+
+| Método | Ruta | Descripción | Límite |
+|--------|------|-------------|--------|
+| POST | `/auth/register` | Registrar usuario | 3/min |
+| POST | `/auth/login` | Iniciar sesión — retorna JWT | 5/min |
+| GET | `/auth/me` | Datos del usuario autenticado | — |
+
+### Usuarios (`/users`)
+
+| Método | Ruta | Protección | Límite |
+|--------|------|------------|--------|
+| GET | `/users/` | Autenticado | 30/min |
+| GET | `/users/{id}` | Autenticado | — |
+| POST | `/users/` | Público | — |
+| PUT | `/users/{id}` | Admin | — |
+| PATCH | `/users/{id}` | Admin | — |
+| DELETE | `/users/{id}` | Admin | — |
+
+### Dispositivos (`/devices`)
+
+| Método | Ruta | Protección |
+|--------|------|------------|
+| GET | `/devices/` | Público |
+| GET | `/devices/{id}` | Público |
+| POST | `/devices/` | Admin o Support |
+| PUT | `/devices/{id}` | Admin o Support |
+| PATCH | `/devices/{id}` | Admin o Support |
+| DELETE | `/devices/{id}` | Solo Admin |
+
+### Préstamos (`/loans`)
+
+| Método | Ruta | Protección | Límite |
+|--------|------|------------|--------|
+| GET | `/loans/` | Público | — |
+| GET | `/loans/details` | Admin o Support | — |
+| POST | `/loans/` | Autenticado | 10/min |
+| PATCH | `/loans/{id}/return` | Admin o Support | — |
+
+---
+
+## Roles
+
+| Rol | Permisos |
+|-----|----------|
+| `admin` | Acceso total a todos los endpoints |
+| `support` | Crear y editar dispositivos, gestionar devoluciones |
+| `user` | Consultar recursos y crear préstamos |
+
+---
+
+## Seguridad
+
+### Hash de contraseñas
+
+Las contraseñas **nunca se almacenan en texto plano**. Se usa `bcrypt` a través de `passlib` para generar un hash seguro antes de persistir en base de datos. La contraseña original nunca puede recuperarse.
+
+Requisitos mínimos de contraseña:
+- Mínimo 8 caracteres
+- Al menos una mayúscula
+- Al menos una minúscula
+- Al menos un número
+- Sin espacios en blanco
+
+### Tokens JWT
+
+- Firmados con algoritmo HS256
+- Expiración configurable vía variable de entorno (por defecto 30 minutos)
+- Se envían en cada petición mediante el header: `Authorization: Bearer <token>`
+- El payload contiene el email y el rol del usuario
+
+### Rate Limiting
+
+Se usa `slowapi` para limitar el número de peticiones por IP. Al superar el límite configurado la API responde automáticamente con `429 Too Many Requests`.
+
+---
+
+## Middleware personalizado
+
+Cada respuesta incluye automáticamente las siguientes cabeceras:
+X-App-Name: device_systems
+
+X-Process-Time: 0.0042
+
+X-Request-ID: 8f42e9c1-...
+
+- `X-App-Name` identifica la aplicación
+- `X-Process-Time` muestra el tiempo de procesamiento en segundos
+- `X-Request-ID` permite rastrear cada petición individualmente
+
+---
+
+## Evidencias (Capturas)
+
+
+<details>
+<summary><b> Evolucion FASTAPI (Click para abrir)</b></summary>
+
+## Captura 1 — Estructura Proyecto
+
+![Estructura](images/EstructuraEV11.png)
+
+![Estructura](images/Estructura2EV11.png)
+
+---
+
+## Captura 2 - Migracion
+
+![Migracion](images/MigracionEV11.png)
+
+---
+
+## Captura 3 - Register
+
+![Register](images/AuthRegister.png)
+
+---
+
+
+## Captura 4 - Login + Token
+
+![Login + token](images/AuthLogin.png)
+
+---
+
+## Captura 5 - AuthMe
+
+![AuthMe](images/AuthMe.png)
+
+---
+
+## Captura 6 - Acceso No Token
+
+![Acceso No Token](images/NoToken.png)
+
+---
+
+## Captura 7 - Rol No permitido
+
+![Rol no permitido](images/RolNoPermitido.png)
+
+---
+
+## Captura 8 - Swagger/OpenAPI con OAuth2
+
+![Swagger/OpenAPI con OAuth2](images/SwaggerAuth.png)
+
+---
+
+## Captura 9 - cabeceras del middleware
+
+![cabeceras del middleware](images/Cabezeras.png)
+
+---
+
+## Captura 10 - Rate litiming
+
+![Rate Limiting](images/ManyRequest.png)
+
+---
+
+</details>
+
+
+## Configuración CORS
+
+### ¿Por qué NO usar `"*"` en `allow_origins` cuando hay credenciales?
+
+Cuando se configura `allow_credentials=True` en el middleware CORS, el estándar de seguridad web **prohíbe explícitamente usar `"*"` como valor de `allow_origins`**. El navegador rechazará la respuesta directamente.
+
+La razón de fondo es más importante: si se permitiera cualquier origen con credenciales activas, un sitio web malicioso podría hacer peticiones autenticadas a tu API usando el token o las cookies del usuario que tenga sesión abierta, abriendo la puerta a ataques **CSRF (Cross-Site Request Forgery)**.
+
+```python
+allow_origins=[
+    "https://mi-frontend.com",
+    "https://admin.mi-empresa.com",
+]
+
+#  Prohibido cuando allow_credentials=True
+allow_origins=["*"]
+```
+
+En producción siempre se deben listar exactamente los dominios autorizados, garantizando que solo el frontend legítimo pueda consumir la API con credenciales y protegiendo a los usuarios autenticados de ataques externos.
+
+---
+
+## Autenticación en Swagger
+
+1. Abrir http://localhost:8000/docs
+2. Hacer clic en **Authorize 🔒**
+3. Ingresar el email en el campo **username**
+4. Ingresar la contraseña en el campo **password**
+5. Hacer clic en **Authorize**
+6. Todos los endpoints protegidos quedan autenticados automáticamente
+
+## Ver video
+[Ver video EV11](https://youtu.be/2HrJUreJnxQ?si=zo412sTWtA6Q8grC)
