@@ -798,6 +798,8 @@ La combinación de migraciones, relaciones y JOINs convierte una API básica en 
 5. API REST completa: CRUD completo para Users, Devices y Loans.
 
 
+---
+
 # device_systems API REST — EV11
 
 API REST segura para gestión de usuarios, dispositivos y préstamos, desarrollada con FastAPI.
@@ -967,7 +969,7 @@ X-Request-ID: 8f42e9c1-...
 
 ---
 
-## Evidencias (Capturas)
+# Evidencias (Capturas)
 
 
 <details>
