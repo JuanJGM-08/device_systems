@@ -1,6 +1,8 @@
 from sqlalchemy.orm import Session
 
 from app.models.user_model import User
+from app.auth.security import get_password_hash
+from app.schemas.auth_schema import UserRegister
 
 
 def get_all_users(
@@ -88,3 +90,30 @@ def delete_user(
 
     db.delete(user)
     db.commit()
+
+
+def create_user_with_password(
+    db: Session,
+    user_data: UserRegister
+):
+    """Crea un usuario con contraseña hasheada."""
+    # Validar rol
+    if user_data.role not in ["admin", "support", "user"]:
+        raise ValueError("Rol no permitido")
+
+    # Hashear contraseña
+    hashed_password = get_password_hash(user_data.password)
+
+    # Crear usuario
+    user = User(
+        name=user_data.name,
+        email=user_data.email,
+        hashed_password=hashed_password,
+        role=user_data.role,
+        is_active=True
+    )
+
+    db.add(user)
+    db.commit()
+    db.refresh(user)
+    return user
